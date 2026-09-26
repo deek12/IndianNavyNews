@@ -74,6 +74,164 @@ def database_status():
         log(f"{status}: {count}")
 
 
+def generate_website():
+
+    log()
+    log("=" * 70)
+    log("GENERATING STATIC WEBSITE")
+    log("=" * 70)
+    log()
+
+    result = subprocess.run(
+        [sys.executable, "website.py"],
+        capture_output=True,
+        text=True
+    )
+
+    if result.stdout:
+        log(result.stdout)
+
+    if result.stderr:
+        log("ERROR OUTPUT:")
+        log(result.stderr)
+
+    if result.returncode != 0:
+
+        log(
+            "website.py FAILED "
+            f"with exit code {result.returncode}"
+        )
+
+        return False
+
+    log("website.py completed successfully.")
+
+    return True
+
+
+def publish_to_github():
+
+    log()
+    log("=" * 70)
+    log("PUBLISHING WEBSITE TO GITHUB")
+    log("=" * 70)
+    log()
+
+    # Stage only the public website and generator.
+    # news.db remains local because it is in .gitignore.
+    add_result = subprocess.run(
+        [
+            "git",
+            "add",
+            "docs",
+            "website.py"
+        ],
+        capture_output=True,
+        text=True
+    )
+
+    if add_result.stdout:
+        log(add_result.stdout)
+
+    if add_result.stderr:
+        log("GIT ADD OUTPUT:")
+        log(add_result.stderr)
+
+    if add_result.returncode != 0:
+
+        log(
+            "git add FAILED "
+            f"with exit code {add_result.returncode}"
+        )
+
+        return False
+
+    # Check whether there is actually anything new to commit.
+    diff_result = subprocess.run(
+        [
+            "git",
+            "diff",
+            "--cached",
+            "--quiet"
+        ],
+        capture_output=True,
+        text=True
+    )
+
+    if diff_result.returncode == 0:
+
+        log("No website changes detected.")
+        log("Nothing to commit or push.")
+
+        return True
+
+    if diff_result.returncode != 1:
+
+        log(
+            "Unable to check staged Git changes."
+        )
+
+        return False
+
+    commit_result = subprocess.run(
+        [
+            "git",
+            "commit",
+            "-m",
+            "Automatically publish latest defence news"
+        ],
+        capture_output=True,
+        text=True
+    )
+
+    if commit_result.stdout:
+        log(commit_result.stdout)
+
+    if commit_result.stderr:
+        log("GIT COMMIT OUTPUT:")
+        log(commit_result.stderr)
+
+    if commit_result.returncode != 0:
+
+        log(
+            "git commit FAILED "
+            f"with exit code {commit_result.returncode}"
+        )
+
+        return False
+
+    push_result = subprocess.run(
+        [
+            "git",
+            "push"
+        ],
+        capture_output=True,
+        text=True
+    )
+
+    if push_result.stdout:
+        log(push_result.stdout)
+
+    if push_result.stderr:
+        log("GIT PUSH OUTPUT:")
+        log(push_result.stderr)
+
+    if push_result.returncode != 0:
+
+        log(
+            "git push FAILED "
+            f"with exit code {push_result.returncode}"
+        )
+
+        return False
+
+    log()
+    log("WEBSITE SUCCESSFULLY PUBLISHED TO GITHUB.")
+    log()
+
+    return True
+
+
 def main():
 
     start_time = datetime.now()
@@ -83,25 +241,32 @@ def main():
     log("=" * 70)
     log()
 
+    log("START TIME:")
     log(
-        "START TIME:",
-    )
-    log(
-        start_time.strftime("%Y-%m-%d %H:%M:%S")
+        start_time.strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
     )
 
     log()
 
-    # Step 1:
-    # Discover new PIB articles.
+    # ------------------------------------------------------------
+    # STEP 1: Discover new PIB articles
+    # ------------------------------------------------------------
+
     if not run_script("pib_monitor.py"):
 
         log()
-        log("Automation stopped during PIB discovery.")
+        log(
+            "Automation stopped during PIB discovery."
+        )
+
         return
 
-    # Step 2:
-    # Find public web sources and extract content.
+    # ------------------------------------------------------------
+    # STEP 2: Find public sources and extract content
+    # ------------------------------------------------------------
+
     while True:
 
         conn = sqlite3.connect(DB_FILE)
@@ -124,15 +289,56 @@ def main():
         if not run_script("source_finder.py"):
 
             log()
-            log("Source finder failed.")
+            log(
+                "Source finder failed."
+            )
+
             break
 
-    # Step 3:
-    # Rewrite all available source articles with local AI.
+    # ------------------------------------------------------------
+    # STEP 3: Rewrite articles with local Qwen AI
+    # ------------------------------------------------------------
+
     if not run_script("ai_rewriter.py"):
 
         log()
-        log("AI rewriting stage failed.")
+        log(
+            "AI rewriting stage failed."
+        )
+
+    # ------------------------------------------------------------
+    # STEP 4: Generate static website
+    # ------------------------------------------------------------
+
+    if not generate_website():
+
+        log()
+        log(
+            "Website generation failed."
+        )
+
+        database_status()
+
+        return
+
+    # ------------------------------------------------------------
+    # STEP 5: Publish website to GitHub Pages
+    # ------------------------------------------------------------
+
+    if not publish_to_github():
+
+        log()
+        log(
+            "GitHub publishing failed."
+        )
+
+        database_status()
+
+        return
+
+    # ------------------------------------------------------------
+    # STEP 6: Show database status
+    # ------------------------------------------------------------
 
     database_status()
 
@@ -143,18 +349,29 @@ def main():
     log("AUTOMATION COMPLETE")
     log("=" * 70)
 
+    log("END TIME:")
+
     log(
-        "END TIME:",
+        end_time.strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
     )
+
+    log("DURATION:")
+
     log(
-        end_time.strftime("%Y-%m-%d %H:%M:%S")
+        str(
+            end_time - start_time
+        )
+    )
+
+    log()
+    log(
+        "LIVE WEBSITE:"
     )
 
     log(
-        "DURATION:",
-    )
-    log(
-        str(end_time - start_time)
+        "https://deek12.github.io/IndianNavyNews/"
     )
 
 
@@ -166,6 +383,10 @@ if __name__ == "__main__":
         encoding="utf-8"
     ) as log_file:
 
-        with redirect_stdout(log_file), redirect_stderr(log_file):
+        with redirect_stdout(
+            log_file
+        ), redirect_stderr(
+            log_file
+        ):
 
             main()

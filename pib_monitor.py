@@ -50,20 +50,132 @@ def search_pib(start_date, end_date):
     return json.loads(data["d"])
 
 
-def is_indian_navy(title):
+def is_indian_defence(title):
     keywords = [
+        # Indian Armed Forces
         "INDIAN NAVY",
-        "INS ",
-        "NAVAL",
         "INDIAN NAVAL",
+        "NAVAL",
+        "INDIAN ARMY",
+        "INDIAN AIR FORCE",
+        "IAF",
+        "ARMY",
+        "AIR FORCE",
+        "COAST GUARD",
+        "INDIAN COAST GUARD",
+
+        # Defence organisations
+        "MINISTRY OF DEFENCE",
+        "DEFENCE MINISTRY",
+        "DEFENCE RESEARCH",
+        "DRDO",
+        "DEFENCE RESEARCH AND DEVELOPMENT",
+        "DEPARTMENT OF DEFENCE",
+
+        # Ships and naval systems
+        "INS ",
+        "WARSHIP",
+        "WARSHIPS",
+        "FRIGATE",
+        "DESTROYER",
+        "CORVETTE",
+        "SUBMARINE",
+        "AIRCRAFT CARRIER",
+        "MISSILE VESSEL",
+        "PATROL VESSEL",
+        "LANDING SHIP",
         "NEXT GENERATION MISSILE VESSEL",
-        "NGMV",
-        "SLINEX",
+
+        # Aircraft
+        "FIGHTER AIRCRAFT",
+        "FIGHTER JET",
+        "MILITARY AIRCRAFT",
+        "COMBAT AIRCRAFT",
+        "HELICOPTER",
+        "HELICOPTERS",
+        "TEJAS",
+        "RAFALE",
+        "SUKHOI",
+        "MIRAGE 2000",
+        "MIG-29",
+        "C-17",
+        "C-130J",
+        "APACHE",
+        "CHINOOK",
+
+        # Missiles and weapons
+        "MISSILE",
+        "MISSILES",
+        "TORPEDO",
+        "ROCKET",
+        "ROCKETS",
+        "WEAPON",
+        "WEAPONS",
+        "AMMUNITION",
+        "AIR DEFENCE",
+        "ANTI-AIRCRAFT",
+        "ANTI AIRCRAFT",
+        "ANTI-AIRFIELD",
+        "BRAHMOS",
+        "AKASH",
+        "AGNI",
+        "PRITHVI",
+        "ASTRA",
+        "PINAKA",
+
+        # Defence procurement / contracts
+        "DEFENCE CONTRACT",
+        "DEFENCE CONTRACTS",
+        "DEFENCE PROCUREMENT",
+        "DEFENCE ACQUISITION",
+        "MILITARY PROCUREMENT",
+        "DEFENCE DEAL",
+        "DEFENCE DEALS",
+        "CONTRACT WITH",
+        "PROCUREMENT",
+        "ACQUISITION",
+        "ATMANIRBHAR",
+        "AATMANIRBHAR",
+        "MAKE IN INDIA",
+
+        # Defence exercises / operations
+        "MILITARY EXERCISE",
+        "MILITARY EXERCISES",
+        "DEFENCE EXERCISE",
+        "JOINT EXERCISE",
+        "JOINT EXERCISES",
+        "BILATERAL EXERCISE",
+        "MARITIME EXERCISE",
+        "WAR EXERCISE",
         "MALABAR",
         "VARUNA",
         "MILAN",
+        "SLINEX",
         "KONKAN",
         "SAMUDRA",
+        "ADMM-PLUS",
+
+        # Defence technology
+        "DEFENCE TECHNOLOGY",
+        "MILITARY TECHNOLOGY",
+        "DEFENCE SYSTEM",
+        "DEFENCE SYSTEMS",
+        "SURVEILLANCE SYSTEM",
+        "RADAR",
+        "ELECTRONIC WARFARE",
+        "UNMANNED",
+        "UAV",
+        "DRONE",
+        "DRONES",
+        "COMBAT SYSTEM",
+
+        # General defence terminology
+        "DEFENCE",
+        "DEFENSE",
+        "MILITARY",
+        "ARMED FORCES",
+        "AEROSPACE",
+        "SECURITY FORCES",
     ]
 
     title_upper = title.upper()
@@ -99,7 +211,7 @@ def main():
     start_date = today - timedelta(days=7)
 
     print("=" * 70)
-    print("INDIAN NAVY NEWS MONITOR")
+    print("INDIAN DEFENCE NEWS MONITOR")
     print("=" * 70)
     print()
     print("Searching PIB...")
@@ -111,18 +223,18 @@ def main():
     print("Total Defence press releases:", len(results))
     print()
 
-    navy_results = [
+    defence_results = [
         item
         for item in results
-        if is_indian_navy(item.get("Press_Title", ""))
+        if is_indian_defence(item.get("Press_Title", ""))
     ]
 
-    print("Potential Indian Navy releases:", len(navy_results))
+    print("Potential Indian Defence releases:", len(defence_results))
     print()
 
     new_count = 0
 
-    for item in navy_results:
+    for item in defence_results:
         prid = item.get("PRID")
         title = item.get("Press_Title")
         date = item.get("Published_Date")
