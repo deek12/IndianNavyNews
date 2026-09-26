@@ -62,8 +62,39 @@ header {
 
 .section-title {
     font-size: 26px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
+
+/* CATEGORY NAVIGATION */
+
+.category-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.category-button {
+    border: 1px solid #cbd5e1;
+    background: white;
+    color: #334155;
+    padding: 9px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.category-button:hover {
+    background: #e2e8f0;
+}
+
+.category-button.active {
+    background: #111827;
+    color: white;
+    border-color: #111827;
+}
+
+/* ARTICLE GRID */
 
 .articles {
     display: grid;
@@ -130,6 +161,27 @@ footer {
     font-size: 13px;
 }
 
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .category-navigation {
+        gap: 7px;
+    }
+
+    .category-button {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+}
+
+/* ARTICLE FILTER */
+
+.card.hidden {
+    display: none;
+}
+
 </style>
 
 </head>
@@ -159,10 +211,61 @@ Latest News
 </h2>
 
 
+<div class="category-navigation">
+
+
+        <button
+            class="category-button active"
+            onclick="filterCategory('All', this)">
+            All
+        </button>
+        
+
+            <button
+                class="category-button"
+                onclick="filterCategory('DRDO', this)">
+                DRDO
+            </button>
+            
+
+            <button
+                class="category-button"
+                onclick="filterCategory('Defence Ministry', this)">
+                Defence Ministry
+            </button>
+            
+
+            <button
+                class="category-button"
+                onclick="filterCategory('Indian Air Force', this)">
+                Indian Air Force
+            </button>
+            
+
+            <button
+                class="category-button"
+                onclick="filterCategory('Indian Army', this)">
+                Indian Army
+            </button>
+            
+
+            <button
+                class="category-button"
+                onclick="filterCategory('Indian Navy', this)">
+                Indian Navy
+            </button>
+            
+
+</div>
+
+
+
 <div class="articles">
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Navy">
 
     
 <img
@@ -174,7 +277,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Navy
         </div>
 
         <h2>
@@ -194,7 +297,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Defence Ministry">
 
     
 <img
@@ -206,7 +311,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Defence Ministry
         </div>
 
         <h2>
@@ -226,7 +331,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Navy">
 
     
 <img
@@ -238,7 +345,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Navy
         </div>
 
         <h2>
@@ -258,7 +365,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="DRDO">
 
     
 <img
@@ -270,7 +379,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            DRDO
         </div>
 
         <h2>
@@ -290,7 +399,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Navy">
 
     
 <img
@@ -302,7 +413,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Navy
         </div>
 
         <h2>
@@ -322,7 +433,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Air Force">
 
     
 <img
@@ -334,7 +447,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Air Force
         </div>
 
         <h2>
@@ -354,7 +467,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Air Force">
 
     
 <img
@@ -366,7 +481,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Air Force
         </div>
 
         <h2>
@@ -386,7 +501,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Navy">
 
     
 <img
@@ -398,7 +515,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Navy
         </div>
 
         <h2>
@@ -418,7 +535,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Army">
 
     
 <img
@@ -430,7 +549,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Army
         </div>
 
         <h2>
@@ -450,7 +569,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Navy">
 
     
 <img
@@ -464,7 +585,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Navy
         </div>
 
         <h2>
@@ -486,7 +607,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Navy">
 
     
 <img
@@ -498,7 +621,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Navy
         </div>
 
         <h2>
@@ -518,7 +641,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Navy">
 
     
 <img
@@ -532,7 +657,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Navy
         </div>
 
         <h2>
@@ -554,7 +679,9 @@ Latest News
 </div>
 
 
-<div class="card">
+<div
+    class="card"
+    data-category="Indian Navy">
 
     
 <img
@@ -566,7 +693,7 @@ Latest News
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            Indian Navy
         </div>
 
         <h2>
@@ -594,6 +721,39 @@ Latest News
 <footer>
 Indian Defence News
 </footer>
+
+<script>
+
+function filterCategory(category, button) {
+
+    const cards = document.querySelectorAll(".card");
+    const buttons = document.querySelectorAll(".category-button");
+
+    buttons.forEach(function(item) {
+        item.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    cards.forEach(function(card) {
+
+        const cardCategory =
+            card.getAttribute("data-category");
+
+        if (
+            category === "All" ||
+            cardCategory === category
+        ) {
+            card.classList.remove("hidden");
+        } else {
+            card.classList.add("hidden");
+        }
+
+    });
+
+}
+
+</script>
 
 </body>
 

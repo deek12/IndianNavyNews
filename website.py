@@ -22,7 +22,8 @@ def get_articles():
             image_url,
             ai_article,
             source_url,
-            date
+            date,
+            category
         FROM articles
         WHERE status = 'AI_REWRITTEN'
         ORDER BY date DESC
@@ -52,6 +53,49 @@ def make_paragraphs(text):
 
 def create_homepage(articles):
 
+    categories = sorted(
+        set(
+            article[6] or "Defence"
+            for article in articles
+        )
+    )
+
+    category_buttons = [
+        """
+        <button
+            class="category-button active"
+            onclick="filterCategory('All', this)">
+            All
+        </button>
+        """
+    ]
+
+    for category in categories:
+
+        category_buttons.append(
+            """
+            <button
+                class="category-button"
+                onclick="filterCategory('CATEGORY', this)">
+                CATEGORY
+            </button>
+            """.replace(
+                "CATEGORY",
+                esc(category)
+            )
+        )
+
+    category_navigation = """
+<div class="category-navigation">
+
+CATEGORY_BUTTONS
+
+</div>
+""".replace(
+        "CATEGORY_BUTTONS",
+        "\n".join(category_buttons)
+    )
+
     cards = []
 
     for article in articles:
@@ -59,6 +103,7 @@ def create_homepage(articles):
         prid = article[0]
         title = article[1] or "Indian Defence News"
         image_url = article[2] or ""
+        category = article[6] or "Defence"
 
         image_html = ""
 
@@ -78,14 +123,16 @@ def create_homepage(articles):
             )
 
         card = """
-<div class="card">
+<div
+    class="card"
+    data-category="CATEGORY">
 
     IMAGE
 
     <div class="card-content">
 
         <div class="category">
-            Defence News
+            CATEGORY
         </div>
 
         <h2>
@@ -109,6 +156,9 @@ def create_homepage(articles):
         ).replace(
             "TITLE",
             esc(title)
+        ).replace(
+            "CATEGORY",
+            esc(category)
         ).replace(
             "PRID",
             esc(str(prid))
@@ -201,8 +251,39 @@ header {
 
 .section-title {
     font-size: 26px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
+
+/* CATEGORY NAVIGATION */
+
+.category-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.category-button {
+    border: 1px solid #cbd5e1;
+    background: white;
+    color: #334155;
+    padding: 9px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.category-button:hover {
+    background: #e2e8f0;
+}
+
+.category-button.active {
+    background: #111827;
+    color: white;
+    border-color: #111827;
+}
+
+/* ARTICLE GRID */
 
 .articles {
     display: grid;
@@ -269,6 +350,27 @@ footer {
     font-size: 13px;
 }
 
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .category-navigation {
+        gap: 7px;
+    }
+
+    .category-button {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+}
+
+/* ARTICLE FILTER */
+
+.card.hidden {
+    display: none;
+}
+
 </style>
 
 </head>
@@ -297,6 +399,8 @@ Defence, military and strategic affairs
 Latest News
 </h2>
 
+CATEGORY_NAVIGATION
+
 ARTICLES
 
 </div>
@@ -305,10 +409,46 @@ ARTICLES
 Indian Defence News
 </footer>
 
+<script>
+
+function filterCategory(category, button) {
+
+    const cards = document.querySelectorAll(".card");
+    const buttons = document.querySelectorAll(".category-button");
+
+    buttons.forEach(function(item) {
+        item.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    cards.forEach(function(card) {
+
+        const cardCategory =
+            card.getAttribute("data-category");
+
+        if (
+            category === "All" ||
+            cardCategory === category
+        ) {
+            card.classList.remove("hidden");
+        } else {
+            card.classList.add("hidden");
+        }
+
+    });
+
+}
+
+</script>
+
 </body>
 
 </html>
 """.replace(
+        "CATEGORY_NAVIGATION",
+        category_navigation
+    ).replace(
         "ARTICLES",
         articles_html
     )
@@ -344,6 +484,7 @@ def create_article_page(article):
     image_url = article[2] or ""
     article_text = article[3] or ""
     source_url = article[4] or ""
+    category = article[6] or "Defence"
 
     article_directory = os.path.join(
         SITE_DIR,
@@ -544,7 +685,7 @@ Indian Defence News
 <div class="article-box">
 
 <div class="category">
-Defence News
+CATEGORY
 </div>
 
 <h1>
@@ -591,6 +732,11 @@ SOURCE_URL
     page = page.replace(
         "ARTICLE_DESCRIPTION",
         esc(description)
+    )
+
+    page = page.replace(
+        "CATEGORY",
+        esc(category)
     )
 
     page = page.replace(
